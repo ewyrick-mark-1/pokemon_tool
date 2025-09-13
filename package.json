@@ -1,0 +1,21 @@
+{
+  "name": "pokemon_tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewyrick-mark-1/pokemon_tool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ewyrick-mark-1/pokemon_tool/issues"
+  },
+  "homepage": "https://github.com/ewyrick-mark-1/pokemon_tool#readme"
+}
