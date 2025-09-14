@@ -18,8 +18,7 @@ The use of AI in this project was limited to the following:
 
 - Research on best practices for API setup
 - Research on JS specific syntax
-
-All 
+- developing invalid command cases for testing
 
 ### commands for testing:
 error codes:
@@ -33,7 +32,9 @@ search:
     valid commands:
         - npm run start -- search pikachu
         - npm run start -- search pikachu skarmory
+        - npm run start -- search pikachu skarmory
         - npm run start -- search 123
+        - npm run start -- search pikachu --json
 
     invalid commands:
         - npm run start -- search                                               //unhandled - empty
