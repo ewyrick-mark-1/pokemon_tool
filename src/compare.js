@@ -7,7 +7,7 @@ let stats = [];                     //list of stat names from arguments
 const INVALID_ARGS =    "invalid arguments. command should be of the form: \ncompare -- [pikachu] [skarmony] -- stat [speed]\nexiting with code 1.";
 const BAD_API =         "something went wrong with API call in compare.js - exiting with code 2.\n";
 
-const allowed_stats = {             //list of allowed stats. key-value paired
+const allowed_stats = {                                                     //list of allowed stats. key-value paired
     'HP'                : 0,
     'ATTACK'            : 1,
     'ATK'               : 1,
@@ -28,7 +28,7 @@ function isStat(stat){                                                      // c
 
 function handle_args(args){                                                 // parses arguments and stores in pokemon_names and stats
 
-    let flag = 0;                                                           //flag keeps track of what arg we are looking at (pokemon_names : 0, stat : 1)
+    let flag = 0;                                                           //flag keeps track of what arg we are looking at (compare : 0, stat : 1)
 
 
     //main argument loop
@@ -71,7 +71,7 @@ async function fetch_pokemon(){                                             // g
         const name = pokemon_names[i];
         if(!pokemonCache[name]){                                            // avoids duplicates
             let current_pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-            if(!pokemon.ok){                                                //handles bad api request
+            if(!current_pokemon.ok){                                        // handles bad api request
                 console.error(BAD_API);
                 process.exit(2);
             }
@@ -89,20 +89,21 @@ function compare_stats(){                                                   // c
         let current_stat_num = allowed_stats[stats[i].toUpperCase()];       // saves current stat of interest in a local variable
 
         for(const name in pokemonCache){                                    // loops through pokemonCache to init names_and_values
-            names_and_values.push([                                         // adds [name, stat_value] tp names_and_values
+            let stat = pokemonCache[name].stats[current_stat_num].base_stat;
+            names_and_values.push({                                         // adds {name, stat_value} tp names_and_values
                 name, 
-                pokemonCache[name].stats[current_stat_num].base_stat
-            ]);
+                stat
+            });
         }
 
         
         let max = names_and_values[0];                                      // assign max to first index as default
         for(let j = 1; j < names_and_values.length; j++){                   //loop through names_and_values
-            if(names_and_values[j][1] > max[1]){                            //max logic
+            if(names_and_values[j].stat > max.stat){                            //max logic
                 max = names_and_values[j];
             }
         }
-        console.log(`pokemon with the highest ${stats[i]}: ${max}`);
+        console.log(`pokemon with the highest ${stats[i]}: ${max.name}, ${max.stat}`);
         console.table(names_and_values);                                    //basic table
         
     }
