@@ -3,31 +3,26 @@
 let cache = {};                     //cache
 let pokemon_names = [];             //list of pokemon names from arguments
 let stats = [];                     //list of stat names from arguments
-let pokemon = [];                   //actual, full pulled json pokemon data
+
 
 const INVALID_ARGS = "invalid arguments. command should be of the form: \ncompare -- [pikachu] [skarmony] -- stat [speed]\nexiting with code 1.";
-const allowed_stats = [             //list of allowed stats
-    'hp',
-    'attack',
-    'defense',
-    'special-attack',
-    'special-defense',
-    'speed',
-    'atk',
-    'def',
-    'spd',
-    'spe'
-];
+const allowed_stats = {             //list of allowed stats
+    'HP'                : 0,
+    'ATTACK'            : 1,
+    'ATK'               : 1,
+    'DEFENSE'           : 2,
+    'DEF'               : 2,
+    'SPECIAL-ATTACK'    : 3,
+    'SPA'               : 3,
+    'SPECIAL-DEFENSE'   : 4,
+    'SPD'               : 4,
+    'SPEED'             : 5,
+    'SPE'               : 5
+};
 
 
 function isStat(stat){
-    for (let i = 0; i < allowed_stats.length; i++){
-        if(stat.toUpperCase() === allowed_stats[i].toUpperCase()){  //puts both to uppercase to catch mixed capitalization
-            return true;
-        } 
-    }
-
-    return false;                                                   //default case
+    return  stat.toUpperCase() in allowed_stats;      // checks entered key against allowed ones
 }
 
 function handle_args(args){
@@ -70,7 +65,8 @@ function handle_args(args){
     }
 }
 
-async function fetch_pokemon(){ // caches pokemon
+async function fetch_pokemon(){         // caches pokemon
+    let pokemon = [];                   //actual, full pulled json pokemon data
     for(let i = 0; i < pokemon_names.length; i++){
         const name = pokemon_names[i];
         if(cache[name]){
@@ -81,24 +77,42 @@ async function fetch_pokemon(){ // caches pokemon
             pokemon.push(current_pokemon);
         }
     }
-    console.log(pokemon, stats);
+    return pokemon;
+    //console.log(pokemon, stats);
 }
 
-function compare_stats(){
+function compare_stats(pokemon){
+    
+    
+
     for(let i = 0; i < stats.length; i++){
-        current_stat = stats[i];
-        max = 0;
+
+        let names_and_values = [];
+        let current_stat_num = allowed_stats[stats[i].toUpperCase()];
+
         for(let j = 0; j < pokemon.length; j++){
+            names_and_values.push([pokemon[j].name, pokemon[j].stats[current_stat_num].base_stat]);
             
         }
+
+        
+        let max = names_and_values[0];
+        for(let j = 1; j < names_and_values.length; j++){
+            if(names_and_values[j][1] > max[1]){
+                max = names_and_values[j]
+            }
+        }
+        console.log(`pokemon with the highest ${stats[i]}: ${max}`);
+        console.table(names_and_values);
+        
     }
 }
-function compare(args){
+async function compare(args){
     handle_args(args);                  //parses arguments and saves them (global)
     console.log(pokemon_names, stats);
-    fetch_pokemon();                    //fetches pokemon and stores them in pokemon
+    let pokemon = await fetch_pokemon();                    //fetches pokemon and stores them in pokemon
     
-    compare_stats();                    //arguments are saved gloablly
+    compare_stats(pokemon);                    //stats are saved gloablly
 }
 
 //exports it so the module may be recieved by main
