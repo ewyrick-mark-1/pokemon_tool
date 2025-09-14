@@ -1,9 +1,8 @@
 //function to loop through types & return them as a single array
 function processTypes(types){
-    let typelist = [];
+    let typelist = new Array;
     for(let i = 0; i < types.length; i++){
         typelist.push(types[i].type.name);
-        console.log(types[i].type.name);
     }
     return typelist;
 }
@@ -13,9 +12,9 @@ async function fetchPokemon(name){
     console.log("searching for :", name);
     let pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
     if(!pokemon.ok){//handles bad api request
-        console.log("something went wrong.\n");
-        console.log("API value: ", value);
-    }else{
+        console.error("something went wrong with API call in search.js - exiting with code 2.\n");
+        process.exit(2);
+    }
         pokemon = await pokemon.json();
         
         //builds array of needed values
@@ -35,7 +34,7 @@ async function fetchPokemon(name){
         }
         console.table(stats);
         
-    }
+    
     
     
     

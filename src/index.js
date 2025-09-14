@@ -20,7 +20,7 @@ switch(args[0]){
         compare(args.slice(1));
     break;
     default:
-        console.log("Invalid arguments. Exiting with code 1.");
+        console.error("Invalid arguments. Exiting with code 1.");
         process.exit(1);
     break;
 }
