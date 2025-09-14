@@ -54,13 +54,13 @@ list:
         - npm run start -- list -- pagesize 20 -- type electric -- page 1
 
     invalid commands:
-        - npm run start -- list                                                 //unhandled - empty
-        - npm run start -- list --page 1                                        //unhandled - empty
-        - npm run start -- list --pagesize twenty --type electric               //handled   - error code 1
-        - npm run start -- list --type                                          //unhandled - empty
-        - npm run start -- list --type electric --page -1                       //unhandled - type error **
-        - npm run start -- list --foo bar --type electric                       //handled   - error code 1
-        - npm run start -- list -- pagesize twenty -- type                      //handled   - error code 1
+        - npm run start -- list                                                 //handled   - error code 1 - NO_ARGS
+        - npm run start -- list --page 1                                        //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- list --pagesize twenty --type electric               //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- list --type                                          //handled   - error code 1 - NO_ARGS
+        - npm run start -- list --type electric --page -1                       //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- list --foo bar --type electric                       //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- list -- pagesize twenty -- type                      //handled   - error code 1 - INVALID_ARGS
 
 compare:
 

@@ -1,12 +1,14 @@
+//defaults
 let pokemonCache = {};
-let json_output = [];
 let pokemon_names = [];
+//special cases
+let json_output = {};
 let json_flag  = false;
 let no_cache = false;
 
 const BAD_API = "ERROR: something went wrong with API call in search.js. \n\nexiting with code 2.\n";
 const INVALID_ARGS = "ERROR: invalid arguments. command should be of the form: npm run start -- search [dugtrio]\n\nexiting with code 1.\n"
-const NO_ARGS = "ERROR: No arguments provided. \n\nexiting with code 1.\n"
+const NO_ARGS = "ERROR: No argument(s) provided. \n\nexiting with code 1.\n"
 function handle_args(args){
 
     let flag = 0;
@@ -45,13 +47,13 @@ function handle_args(args){
                     pokemon_names.push(current_input);              // adds all inputs
                 break;
                 case -1 :                                           // JSON output selected
-                    if(current_input){                              // should not be any arguments. just a flag
+                    if(current_input){                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
                         console.error(INVALID_ARGS);
                         process.exit(1);
                     }
                 break;
                 case -2 :                                           // no-cache selected
-                    if(current_input){                              // should not be any arguments. just a flag
+                    if(current_input){                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
                         console.error(INVALID_ARGS);
                         process.exit(1);
                     }
@@ -109,7 +111,7 @@ async function fetchPokemon(){
             "base Spe"      : pokemon.stats[5].base_stat,
         }
         if(json_flag){                                                  // different behavior if --json
-            json_output.push({[name] : stats});                         // compile all requested into one list
+            json_output[name] = stats;                                  // compile all requested into one obj
         }else {
             console.table(stats);                                       // default output, print in table format
         }
