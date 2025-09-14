@@ -99,7 +99,7 @@ function compare_stats(){                                                   // c
         
         let max = names_and_values[0];                                      // assign max to first index as default
         for(let j = 1; j < names_and_values.length; j++){                   //loop through names_and_values
-            if(names_and_values[j].stat > max.stat){                            //max logic
+            if(names_and_values[j].stat > max.stat){                        //max logic
                 max = names_and_values[j];
             }
         }

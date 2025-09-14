@@ -17,7 +17,7 @@ async function fetchList(type, page_num, page_size){
     list = await list.json();
     for(let i = page_num * page_size; i<(page_size + page_num * page_size)&&i < list.pokemon.length; i++){
 
-        //this is a janky way to do it, but it feels better than calling the API again.
+        //this is a janky way to do it, I couldnt find an id value that is constained in lists.
         const url = list.pokemon[i].pokemon.url;    //"https://pokeapi.co/api/v2/pokemon/id/"
         const id = url.slice(34, -1);               // isolates the id from the URL
 
@@ -44,7 +44,6 @@ function handle_args(args){
                     flag = 0;
                     i++;                                                    //skip and index (we already checked i + 1)
                 break;
-                
                 case 'PAGE':                                                //looks for option page
                     flag = 1;
                     i++;                                                    //skip and index (we already checked i + 1)

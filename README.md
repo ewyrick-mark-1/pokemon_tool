@@ -37,11 +37,11 @@ search:
         - npm run start -- search pikachu --json
 
     invalid commands:
-        - npm run start -- search                                               //unhandled - empty
-        - npm run start -- search --pikachu                                     //unhandled - error code 2
-        - npm run start -- search pikachu --page 1                              //unhandled - error code 2
-        - npm run start -- search pikachu --                                    //unhandled - error code 2
-        - npm run start -- search pikachu charizard --type electric             //unhandled - error code 2
+        - npm run start -- search                                               //handled   - error code 1 - NO_ARGS
+        - npm run start -- search --pikachu                                     //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- search pikachu --page 1                              //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- search pikachu --                                    //handled   - error code 1 - INVALID_ARGS
+        - npm run start -- search pikachu charizard --type electric             //handled   - error code 1 - INVALID_ARGS
 
 list:
 
