@@ -33,7 +33,7 @@ async function fetchList(){
             const url = list.pokemon[i].pokemon.url;    //"https://pokeapi.co/api/v2/pokemon/id/"
             const id = url.slice(34, -1);               // isolates the id from the URL
 
-            const name = list.pokemon[i].pokemon.name;
+            const name = list.pokemon[i].pokemon.name;  // name of the selected pokemon
 
             list_paginated[id] = name;                  //adds kvp to list_pagniated
         }
@@ -99,8 +99,8 @@ function handle_args(args){
                 break;
                 case 1 :                                                            // page input
                     if(args[i-1].toUpperCase() === 'PAGE'){                         // checks previous index for page identifier. only one input allowed (most recent will rewrite)
-                        if(!isNaN(current_input) && Number(current_input) > 0){     // makes sure the input is a number
-                            page = Number(current_input);                           // assigns input & casts as number
+                        if(!isNaN(current_input) && Number(current_input) - 1 > 0){ // makes sure the input is a number
+                            page = Number(current_input) - 1;                       // assigns input & casts as number, -1 to adjust for index by 0
                         } else {
                             console.error(INVALID_ARGS);
                             process.exit(1);                                        // basic error handling

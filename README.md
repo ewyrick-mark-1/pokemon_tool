@@ -23,8 +23,8 @@ The use of AI in this project was limited to the following:
 ### commands for testing:
 error codes:
 
-1 : bad arguments / syntax
-2 : API fetch error
+- 1 : bad arguments / syntax
+- 2 : API fetch error
 
 
 search:
@@ -73,10 +73,9 @@ compare:
         - npm run start -- compare pikachu charizard skarmory -- stat spd def hp -- compare dugtrio
 
     invalid commands:
-        - npm run start -- compare                                              //unhandled - empty
-        - npm run start -- compare pikachu --stat                               //unhandled - empty
-        - npm run start -- compare pikachu charizard --stat 999                 //unhandled - empty
+        - npm run start -- compare                                              //handled   - error code 1 - NO_NAMES
+        - npm run start -- compare pikachu --stat                               //handled   - errpr code 1 - NO_NAMES
+        - npm run start -- compare pikachu charizard --stat 999                 //handled   - error code 1 - INVALID_ARGS
         - npm run start -- compare pikachu charizard --stat spd --compare       //handled   - ignore
-        - npm run start -- compare pikachu charizard --foo bar                  //unhandled - makes it to API
-        - npm run start -- compare --stat spd def hp                            //unhandled - type error **
-        - npm run start -- compare pikachu charizard skarmory -- stat spd       //handled   - parser
+        - npm run start -- compare pikachu charizard --foo bar                  //handled   - error code 1 - INVALID ARGS
+        - npm run start -- compare --stat spd def hp                            //handled   - error code 1 = NO_NAMES
