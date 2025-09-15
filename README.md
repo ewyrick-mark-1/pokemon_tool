@@ -27,6 +27,7 @@ error codes:
 - 2 : API fetch error
 
 
+
 search:
 
     valid commands:
@@ -50,6 +51,8 @@ list:
         - npm run start -- list --type electric --page 1                        
         - npm run start -- list --type electric --page 2
         - npm run start -- list --type electric --page 1 --pagesize 20
+        - npm run start -- list --type electric --page 1.5 --pagesize 20        //kinda
+        - npm run start -- list --type electric --page 1 --pagesize 20.5        //kinda
         - npm run start -- list --pagesize 20 --type electric --page 1
         - npm run start -- list -- pagesize 20 -- type electric -- page 1
 
@@ -79,3 +82,5 @@ compare:
         - npm run start -- compare pikachu charizard --stat spd --compare       //handled   - ignore
         - npm run start -- compare pikachu charizard --foo bar                  //handled   - error code 1 - INVALID ARGS
         - npm run start -- compare --stat spd def hp                            //handled   - error code 1 = NO_NAMES
+
+- note: list can behave strangley with floating point arguments, but does not break due.

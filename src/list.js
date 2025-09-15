@@ -1,3 +1,6 @@
+//imported fucntions
+const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
+
 //defaults
 let listCache = {};
 let types = [];        //keep default type null 
@@ -9,7 +12,6 @@ let json_flag  = false;
 let no_cache = false;
 
 const INVALID_ARGS = "ERROR: invalid arguments. command should be of the form: npm run start -- list -- type [electric] -- page [1] -- pageSize [10]\n\nexiting with code 1.\n"
-const BAD_API = "ERROR: something went wrong with API fetch in list.js. check your arguments. \n\nexiting with code 2.\n";
 const NO_ARGS = "ERROR: No type(s) provided. \n\nexiting with code 1.\n"
 
 async function fetchList(){
@@ -18,12 +20,8 @@ async function fetchList(){
         const type = types[i];
         let list = {};
         if(!listCache[type]){
-            list = await fetch(`https://pokeapi.co/api/v2/type/${type}/`);                              //pagination doesnt seem to do anything here
-            if(!list.ok){//handles bad api request
-                console.error(BAD_API);
-                process.exit(2);
-                
-            }
+            list = await fetchWithDelay(`https://pokeapi.co/api/v2/type/${type}/`, 500 , 5);            //pagination doesnt seem to do anything here
+            
             list = await list.json();
             listCache[type] = list;
         }
@@ -99,7 +97,7 @@ function handle_args(args){
                 break;
                 case 1 :                                                            // page input
                     if(args[i-1].toUpperCase() === 'PAGE'){                         // checks previous index for page identifier. only one input allowed (most recent will rewrite)
-                        if(!isNaN(current_input) && Number(current_input) - 1 > 0){ // makes sure the input is a number
+                        if(!isNaN(current_input) && Number(current_input) > 0){     // makes sure the input is a number 1 or greater
                             page = Number(current_input) - 1;                       // assigns input & casts as number, -1 to adjust for index by 0
                         } else {
                             console.error(INVALID_ARGS);

@@ -1,3 +1,5 @@
+//imported fucntions
+const fetchWithDelay = require('./fetchWithDelay.js');
 
 //globals
 let pokemonCache = {};              //cache, of the form: {name: pokemon(json)}
@@ -9,7 +11,6 @@ let json_flag  = false;
 let no_cache = false;
 
 const INVALID_ARGS      = "invalid arguments. command should be of the form: \ncompare -- [pikachu] [skarmony] -- stat [speed]\n\nexiting with code 1.\n";
-const BAD_API           = "something went wrong with API call in compare.js - \n\nexiting with code 2.\n";
 const NO_NAMES          = "ERROR: too few pokemon provided. \n\nexiting with code 1.\n"
 const NO_STATS          = "ERROR: No stat provided as argument. \n\nexiting with code 1.\n"
 
@@ -119,11 +120,8 @@ async function fetch_pokemon(){                                             // g
     for(let i = 0; i < pokemon_names.length; i++){      
         const name = pokemon_names[i];
         if(!pokemonCache[name]){                                            // avoids duplicates
-            let current_pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-            if(!current_pokemon.ok){                                        // handles bad api request
-                console.error(BAD_API);
-                process.exit(2);
-            }
+            let current_pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+            
             current_pokemon = await current_pokemon.json();
             pokemonCache[name] = current_pokemon;
         }

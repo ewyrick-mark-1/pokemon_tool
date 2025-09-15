@@ -1,3 +1,6 @@
+//imported fucntions
+const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
+
 //defaults
 let pokemonCache = {};
 let pokemon_names = [];
@@ -6,9 +9,9 @@ let json_output = {};
 let json_flag  = false;
 let no_cache = false;
 
-const BAD_API = "ERROR: something went wrong with API call in search.js. \n\nexiting with code 2.\n";
 const INVALID_ARGS = "ERROR: invalid arguments. command should be of the form: npm run start -- search [dugtrio]\n\nexiting with code 1.\n"
 const NO_ARGS = "ERROR: No argument(s) provided. \n\nexiting with code 1.\n"
+
 function handle_args(args){
 
     let flag = 0;
@@ -87,11 +90,8 @@ async function fetchPokemon(){
         console.log("searching for :", name);
         let pokemon = {};
         if(!pokemonCache[name]){
-            pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-            if(!pokemon.ok){//handles bad api request
-                console.error(BAD_API);
-                process.exit(2);
-            }
+            pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+
             pokemon = await pokemon.json();
             pokemonCache[name] = pokemon
         }
