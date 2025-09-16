@@ -1,79 +1,9 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
 
-//defaults
+//global cache
 let pokemonCache = {};
-let pokemon_names = [];
-//special cases
-let json_output = {};
-let json_flag  = false;
-let no_cache = false;
 
-const INVALID_ARGS = "ERROR: invalid arguments. command should be of the form: npm run start -- search [dugtrio]\n\nexiting with code 1.\n"
-const NO_ARGS = "ERROR: No argument(s) provided. \n\nexiting with code 1.\n"
-
-function handle_args(args){
-
-    let flag = 0;
-
-    for(let i = 0; i < args.length; i++){
-        const current_input = args[i];
-        if(current_input === '--'){                                         //looks for --, if seen checks the following command to update flag
-            if(args[i+1]){                                                  //prevent out of bounds indexing
-                switch(args[i+1].toUpperCase()){                                    
-                    case 'SEARCH':                                          //looks for option search
-                        flag = 0;
-                        i++;                                                //skip and index (we already checked i + 1)
-                    break;
-                    case 'JSON':                                            //looks for option json
-                        flag = -1;
-                        json_flag = true;
-                        i++;                                                //skip and index (we already checked i + 1)
-                    break;
-                    case 'NO-CACHE':                                        //looks for option no-cache
-                        flag = -2;
-                        no_cache = true;
-                        i++;                                                //skip and index (we already checked i + 1)
-                    break;
-                    default:                                                //error catchall
-                        console.error(INVALID_ARGS);
-                        process.exit(1);
-                    break;
-                }
-            }else{
-                console.error(INVALID_ARGS);
-                process.exit(1);
-            }                               
-        }else{
-            switch(flag){
-                case 0 :                                            // types input
-                    pokemon_names.push(current_input);              // adds all inputs
-                break;
-                case -1 :                                           // JSON output selected
-                    if(current_input){                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(INVALID_ARGS);
-                        process.exit(1);
-                    }
-                break;
-                case -2 :                                           // no-cache selected
-                    if(current_input){                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(INVALID_ARGS);
-                        process.exit(1);
-                    }
-                break;
-                default:
-                    console.error(INVALID_ARGS);                    //error catchall
-                    process.exit(1);
-                break;
-            }
-        }
-    }
-    if(pokemon_names.length === 0){                                 //no pokemon inputs
-        console.error(NO_ARGS);
-        process.exit(1);
-    }
-
-}
 
 function processTypes(types){                   //function to loop through types & return them as a single array (in the event that a pokemon has multiple types)
     let typelist = new Array;
@@ -83,21 +13,28 @@ function processTypes(types){                   //function to loop through types
     return typelist;
 }
 
-//function to fetchPokemon, outputs basic profile
-async function fetchPokemon(){
+
+async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearlly (bad). if time, update & add concurrency limit
+
     for(let i = 0; i < pokemon_names.length; i++){
         const name = pokemon_names[i];
         console.log("searching for :", name);
         let pokemon = {};
-        if(!pokemonCache[name]){
+        if(!pokemonCache[name]){                //if cached dont bother
             pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
 
             pokemon = await pokemon.json();
             pokemonCache[name] = pokemon
         }
+    }
+}
+async function pokemonStats( json_flag, no_cache){
 
-        //build obj of needed values
-        let stats = {
+    let output = {}                                                     //define output
+
+    for(pokemon_name in pokemonCache){                                  //itterates through cache
+        pokemon = pokemonCache[pokemon_name];                           //assign current pokemon
+        let stats = {                                                   //assign all stats to defined output elements structure
             "id"            : pokemon.id,
             "name"          : pokemon.name,
             "types"         : processTypes(pokemon.types).join(", "),
@@ -110,29 +47,26 @@ async function fetchPokemon(){
             "base SpD"      : pokemon.stats[4].base_stat,
             "base Spe"      : pokemon.stats[5].base_stat,
         }
-        if(json_flag){                                                  // different behavior if --json
-            json_output[name] = stats;                                  // compile all requested into one obj
-        }else {
-            console.table(stats);                                       // default output, print in table format
-        }
-        
-        
-        
+        output[pokemon_name] = stats;                                   //add new kvp to output obj
     }
 
-    if(json_flag){                                      //string all queried pokemon if --json
-        const out = JSON.stringify(json_output);
-        console.log(out);                               //output it to terminal, might be worth making it a file output vis fs
+    if(json_flag){                                                      //string all queried pokemon if --json
+        output = JSON.stringify(output);
     }
-    
+    return output;
  
     
 }
 
-function search(args){
-    handle_args(args);      //parses arguments and handles argument errors
-    fetchPokemon();         //calls API and either comiles outputs to custom json or output as table.
-    
+async function search(args){
+    const pokemon_names = args.arguments.pokemon_names;                 //assign inputs to more readable variables
+    const json_flag = args.flags.json_flag;
+    const no_cache = args.flags.no_cache;
+
+    await fetchPokemon(pokemon_names);                                  //fetch all pokemon (one at a time)
+    const output = pokemonStats(json_flag, no_cache);                   //call stats once all have been fetched
+
+    return output;
     
 }
 
