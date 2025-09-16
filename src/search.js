@@ -1,6 +1,7 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
-
+//globals
+const concurrent_limit = 5;
 
 function processTypes(types){                   //function to loop through types & return them as a single array (in the event that a pokemon has multiple types)
     let typelist = new Array;
@@ -31,7 +32,16 @@ async function fetchPokemon(pokemon_names){     //performs API call for all poke
             }
         });
 
-        await Promise.all(promises);
+        for(let i = 0; i < promises.length; i += concurrent_limit){         //concurrent limit, limits how hard the API it hit.
+        
+        if(i + concurrent_limit > promises.length){                         //prevent out of bounds index
+            upper = promises.length;
+        }else{                                                              //assign upper chunk bound to lower bound + offset
+            upper = i + concurrent_limit
+        }
+        promises_lim = promises.slice(i, upper);                            //chunk promises
+        await Promise.all(promises_lim);                                    //await 
+        }
     
     return pokemonCache;
 }

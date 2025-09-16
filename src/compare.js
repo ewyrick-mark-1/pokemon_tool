@@ -1,6 +1,7 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');
-
+//globals
+const concurrent_limit = 5;
 
 
 
@@ -24,7 +25,7 @@ const allowed_stats = {                                                     //li
 
 async function fetch_pokemon(pokemon_names){                                // gotta cache them all
     let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
-    const promises = pokemon_names.map( async (name) => {
+    const promises = pokemon_names.map( async (name) => {                   //uses map to apply the api fetch to all elements, then saves it to promises so it can all be sent out at once.
         if(!pokemonCache[name]){                                            //check local cache
             
             try{
@@ -39,7 +40,18 @@ async function fetch_pokemon(pokemon_names){                                // g
             
         }
     });
-    await Promise.all(promises);
+    
+    for(let i = 0; i < promises.length; i += concurrent_limit){             //concurrent limit, limits how hard the API it hit.
+        
+        if(i + concurrent_limit > promises.length){                         //prevent out of bounds index
+            upper = promises.length;
+        }else{                                                              //assign upper chunk bound to lower bound + offset
+            upper = i + concurrent_limit
+        }
+        promises_lim = promises.slice(i, upper);                            //chunk promises
+        await Promise.all(promises_lim);                                    //await 
+    }
+    
     return pokemonCache;
 }
 

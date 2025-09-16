@@ -1,6 +1,7 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
-
+//globals
+const concurrent_limit = 5;
 
 function tableFormat(output){                                                                           //function to better format output for tables. page would run long otherwise.
     let formattedOutput = [];
@@ -29,7 +30,17 @@ async function fetchList(types){
             }
         }
     });
-    await Promise.all(promises);
+    
+    for(let i = 0; i < promises.length; i += concurrent_limit){             //concurrent limit, limits how hard the API it hit.
+        
+        if(i + concurrent_limit > promises.length){                         //prevent out of bounds index
+            upper = promises.length;
+        }else{                                                              //assign upper chunk bound to lower bound + offset
+            upper = i + concurrent_limit
+        }
+        promises_lim = promises.slice(i, upper);                            //chunk promises
+        await Promise.all(promises_lim);                                    //await 
+    }
     return listCache;
 }
 
