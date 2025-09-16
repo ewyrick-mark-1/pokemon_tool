@@ -33,7 +33,6 @@ search:
     valid commands:
         - npm run start -- search pikachu
         - npm run start -- search pikachu skarmory
-        - npm run start -- search pikachu skarmory
         - npm run start -- search 123
         - npm run start -- search pikachu --json
 

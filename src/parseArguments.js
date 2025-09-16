@@ -14,7 +14,7 @@ const allowed_stats = {                                         //list of allowe
     'SPE'               : 5
 };
 
-let parsed = {                                                  //final parsed object. kept global for simplicity.
+let parsed = {                                                  //final parsed object. kept global for simplicity. but reset each time ran.
     function : null, 
     arguments : {}, 
     flags : {
@@ -93,7 +93,6 @@ function parseSearch(args){                                     //function for p
 function parseList(args){                                       //function for parsing list arguments and storing them in parsed obj
     
     let flag = 0;                                                           //flag keeps track of what arg we are looking at (list : 0, page : 1, pageSize : 2, json : -1, no_cache : -2)
-
     
     for(let i = 0; i < args.length; i++){
         const current_input = args[i];
@@ -267,6 +266,14 @@ function parseCompare(args){                                    //function for p
 }
 
 function parseArguments(args){
+    parsed = {                                                  //make sure reset in case called multiple times.
+        function : null, 
+        arguments : {}, 
+        flags : {
+            json_flag : false, 
+            no_cache : false
+        }
+    };
 
     for(let i = args.length - 1; i >= 0; i--){                  //backwards loop to make splicing easier
         if(args[i].startsWith("--") && args[i] !== "--"){       //checks for inputs of the form --xyz, but not just --
@@ -274,7 +281,7 @@ function parseArguments(args){
             args[i + 1] = args[i+1].slice(2);                   //removes -- from previous index. ie --xyz -> -- xyz (makes it easier to process)
         }
     }
-    console.log(args);
+    
     switch(args[0].toUpperCase()){                              //args[0] is the base command. above loop cannot check for --basecomand, as npm fails to start correctly, so input required to be -- basecommand
     
     case 'SEARCH':                                              //sets up parsed to be the form that search will require
@@ -288,7 +295,7 @@ function parseArguments(args){
         parsed['function'] = 'LIST';
         parsed['arguments'] = {
             'types'         : [],
-            'page'          : 1,
+            'page'          : 0,
             'pageSize'      : 10,
         }
         parseList(args.slice(1));

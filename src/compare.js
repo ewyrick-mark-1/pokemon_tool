@@ -1,8 +1,8 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');
 
-//globals
-let pokemonCache = {};              //cache, of the form: {name: pokemon(json)}
+
+
 
 const allowed_stats = {                                                     //list of allowed stats. key-value paired
     'HP'                : 0,
@@ -23,6 +23,7 @@ const allowed_stats = {                                                     //li
 
 
 async function fetch_pokemon(pokemon_names){                                // gotta cache them all
+    let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
     for(let i = 0; i < pokemon_names.length; i++){      
         const name = pokemon_names[i];
         if(!pokemonCache[name]){                                            // avoids duplicates
@@ -32,9 +33,10 @@ async function fetch_pokemon(pokemon_names){                                // g
             pokemonCache[name] = current_pokemon;
         }
     }
+    return pokemonCache;
 }
 
-function compare_stats(stats, json_flag, no_cache){                                                   // compares stats (stats) of pokemon (pokemonCache)
+function compare_stats(pokemonCache, stats, json_flag, no_cache){                                                   // compares stats (stats) of pokemon (pokemonCache)
     let output = {};
     for(let i = 0; i < stats.length; i++){                                  // main loop. loops over all entered stats to be comapred.
 
@@ -75,9 +77,11 @@ async function compare(args){
     const json_flag = args.flags.json_flag;
     const no_cache = args.flags.no_cache;
 
+    let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
+
     
-    await fetch_pokemon(pokemon_names);                                     //fetches pokemon and stores them in pokemonCache.
-    const output = compare_stats(stats, json_flag, no_cache);               //pokemon are stored globally in pokemonCache, so only pass the stats and flags
+    pokemonCache = await fetch_pokemon(pokemon_names);                      //fetches pokemon and stores them in pokemonCache.
+    const output = compare_stats(pokemonCache, stats, json_flag, no_cache); //pokemon are stored in pokemonCache, so only pass the stats and flags
 
     return output;
 }

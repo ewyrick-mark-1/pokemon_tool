@@ -1,9 +1,6 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
 
-//global cache
-let pokemonCache = {};
-
 
 function processTypes(types){                   //function to loop through types & return them as a single array (in the event that a pokemon has multiple types)
     let typelist = new Array;
@@ -15,7 +12,7 @@ function processTypes(types){                   //function to loop through types
 
 
 async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearlly (bad). if time, update & add concurrency limit
-
+    let pokemonCache = {};
     for(let i = 0; i < pokemon_names.length; i++){
         const name = pokemon_names[i];
         console.log("searching for :", name);
@@ -27,8 +24,10 @@ async function fetchPokemon(pokemon_names){     //performs API call for all poke
             pokemonCache[name] = pokemon
         }
     }
+    return pokemonCache;
 }
-async function pokemonStats( json_flag, no_cache){
+
+async function pokemonStats(pokemonCache,  json_flag, no_cache){
 
     let output = {}                                                     //define output
 
@@ -37,7 +36,7 @@ async function pokemonStats( json_flag, no_cache){
         let stats = {                                                   //assign all stats to defined output elements structure
             "id"            : pokemon.id,
             "name"          : pokemon.name,
-            "types"         : processTypes(pokemon.types).join(", "),
+            "type(s)"       : processTypes(pokemon.types).join(", "),
             "height (m)"    : (pokemon.height * 0.1).toFixed(3),        //adjusts to standard measurments & limits precision
             "weight (kg)"   : (pokemon.weight * 0.1).toFixed(3),
             "base hp"       : pokemon.stats[0].base_stat,               // 0 is base hp
@@ -62,9 +61,10 @@ async function search(args){
     const pokemon_names = args.arguments.pokemon_names;                 //assign inputs to more readable variables
     const json_flag = args.flags.json_flag;
     const no_cache = args.flags.no_cache;
+    let pokemonCache = {};
 
-    await fetchPokemon(pokemon_names);                                  //fetch all pokemon (one at a time)
-    const output = pokemonStats(json_flag, no_cache);                   //call stats once all have been fetched
+    pokemonCache = await fetchPokemon(pokemon_names);                                   //fetch all pokemon (one at a time)
+    const output = pokemonStats(pokemonCache, json_flag, no_cache);                     //call stats once all have been fetched
 
     return output;
     

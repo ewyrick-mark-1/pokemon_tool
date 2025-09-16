@@ -1,8 +1,6 @@
 //imported fucntions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
 
-//defaults
-let listCache = {};
 
 function tableFormat(output){                                                                           //function to better format output for tables. page would run long otherwise.
     let formattedOutput = [];
@@ -17,6 +15,7 @@ function tableFormat(output){                                                   
 
 }
 async function fetchList(types){
+    let listCache = {};
     for(let i = 0; i < types.length; i++){                                                              //loop through types selected as arguments
 
         const type = types[i];
@@ -28,9 +27,10 @@ async function fetchList(types){
             listCache[type] = list;                                                                     //cache the pulled list into global cache
         }
     }
+    return listCache;
 }
 
-function formatList(page, pageSize,json_flag, no_cache){
+function formatList(listCache, page, pageSize,json_flag, no_cache){
     output = {};
     for(pokemon_type in listCache){                                                                     //iterate through cache
 
@@ -68,9 +68,11 @@ async function list(args){
     
     const json_flag  = args.flags.json_flag;                            //assign flags
     const no_cache = args.flags.no_cache;
+
+    let listCache = {};
         
-    await fetchList(types);                                             //wait for fetching (one at a time)
-    const output = formatList(page, pageSize, json_flag, no_cache);     //formats list into names and IDs for output
+    listCache = await fetchList(types);                                             //wait for fetching (one at a time)
+    const output = formatList(listCache, page, pageSize, json_flag, no_cache);      //formats list into names and IDs for output
 
     return output;
     

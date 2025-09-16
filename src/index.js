@@ -14,13 +14,13 @@ console.log(parsedArgs);                    //log for debugging
 let output = null;                          //init output
 switch( parsedArgs.function ){              //switch based on selected function
     case 'SEARCH':
-        search(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));        //calls search function & provides arguments. output format will be based on --json flag
+        search(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.log(result));        //calls search function & provides arguments. output format will be based on --json flag
     break;
     case 'LIST':
-        list(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));          //calls list function & provides arguments. output format will be based on --json flag
+        list(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.log(result));          //calls list function & provides arguments. output format will be based on --json flag
     break;
     case 'COMPARE':
-        compare(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));       //calls compare function & provides arguments. output format will be based on --json flag
+        compare(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.log(result));       //calls compare function & provides arguments. output format will be based on --json flag
     break;                                  //no default. covered in parseArguments.
 }
 
