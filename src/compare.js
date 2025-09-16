@@ -24,21 +24,22 @@ const allowed_stats = {                                                     //li
 
 async function fetch_pokemon(pokemon_names){                                // gotta cache them all
     let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
-    for(let i = 0; i < pokemon_names.length; i++){      
-        const name = pokemon_names[i];
+    const promises = pokemon_names.map( async (name) => {
         if(!pokemonCache[name]){                                            //check local cache
-            let current_pokemon = {};
+            
             try{
-                current_pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+                let current_pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+                current_pokemon = await current_pokemon.json();
+                pokemonCache[name] = current_pokemon;
             }catch(err){
                 console.error(err.message);
                 process.exit(err.errorCode);
             }
             
-            current_pokemon = await current_pokemon.json();
-            pokemonCache[name] = current_pokemon;
+            
         }
-    }
+    });
+    await Promise.all(promises);
     return pokemonCache;
 }
 

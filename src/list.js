@@ -16,23 +16,20 @@ function tableFormat(output){                                                   
 }
 async function fetchList(types){
     let listCache = {};
-    for(let i = 0; i < types.length; i++){                                                              //loop through types selected as arguments
-
-        const type = types[i];
-        let list = {};
+    const promises = types.map( async (type) => {
         if(!listCache[type]){                                                                           //checks local cache
             
             try{
-                list = await fetchWithDelay(`https://pokeapi.co/api/v2/type/${type}/`, 500 , 5);        //pagination doesnt seem to do anything here, I tried following the documentation but it returned the same size no matter what I did.
-            
+                let list = await fetchWithDelay(`https://pokeapi.co/api/v2/type/${type}/`, 500 , 5);    //pagination doesnt seem to do anything here, I tried following the documentation but it returned the same size no matter what I did.
+                list = await list.json();
+                listCache[type] = list;                                                                 //cache the pulled list into global cache
             }catch(err){
                 console.error(err.message);
                 process.exit(err.errorCode);
             }
-            list = await list.json();
-            listCache[type] = list;                                                                     //cache the pulled list into global cache
         }
-    }
+    });
+    await Promise.all(promises);
     return listCache;
 }
 

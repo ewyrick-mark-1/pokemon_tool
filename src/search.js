@@ -13,23 +13,26 @@ function processTypes(types){                   //function to loop through types
 
 async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearlly (bad). if time, update & add concurrency limit
     let pokemonCache = {};
-    for(let i = 0; i < pokemon_names.length; i++){
-        const name = pokemon_names[i];
-        console.log("searching for :", name);
-        let pokemon = {};
-        if(!pokemonCache[name]){                //if cached dont bother
-            try{
-                pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
-
-            }catch(err){
-                console.error(err.message);
-                process.exit(err.errorCode);
+    
+        const promises = pokemon_names.map( async (name) => {
+            console.log("searching for :", name);
+    
+            if(!pokemonCache[name]){                //if cached dont bother
+                try{
+                    let pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+                    pokemon = await pokemon.json();
+                    pokemonCache[name] = pokemon
+                }catch(err){
+                    console.error(err.message);
+                    process.exit(err.errorCode);
+                }
+                
+                
             }
-            
-            pokemon = await pokemon.json();
-            pokemonCache[name] = pokemon
-        }
-    }
+        });
+
+        await Promise.all(promises);
+    
     return pokemonCache;
 }
 
