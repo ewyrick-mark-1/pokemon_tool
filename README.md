@@ -34,6 +34,7 @@ More examples of commands can be found in the commands for testing section, unde
 ##  How to run tests:
 To run some of the pre built tests, or to run your own you will need to make sure that you have jest installed. If you don't, you can install it via the command 'npm install' - this download the developer dependencies. You can run the test files included under the tests folder with the command 'npm test'. This will test search.js, compare.js, list.js, as well as parseArguments.js.
 
+There is one known bug with testing. Sometimes, concurrent API calls can cause an output to be out of the expected order. It seems to be pretty rare, but it is possible.
 ##  How to add a new command:
 To add a new command there are a few things you will have to do. 
 1. update the switch statements in parseArguments to include your command(s), including separate functions for processing its arguments into the universal 'parsed' variable.
