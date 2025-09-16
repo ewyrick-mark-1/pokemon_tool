@@ -26,8 +26,14 @@ async function fetch_pokemon(pokemon_names){                                // g
     let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
     for(let i = 0; i < pokemon_names.length; i++){      
         const name = pokemon_names[i];
-        if(!pokemonCache[name]){                                            // avoids duplicates
-            let current_pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+        if(!pokemonCache[name]){                                            //check local cache
+            let current_pokemon = {};
+            try{
+                current_pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+            }catch(err){
+                console.error(err.message);
+                process.exit(err.errorCode);
+            }
             
             current_pokemon = await current_pokemon.json();
             pokemonCache[name] = current_pokemon;

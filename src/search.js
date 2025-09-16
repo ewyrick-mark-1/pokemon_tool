@@ -18,8 +18,14 @@ async function fetchPokemon(pokemon_names){     //performs API call for all poke
         console.log("searching for :", name);
         let pokemon = {};
         if(!pokemonCache[name]){                //if cached dont bother
-            pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
+            try{
+                pokemon = await fetchWithDelay(`https://pokeapi.co/api/v2/pokemon/${name}/`, 500, 5);
 
+            }catch(err){
+                console.error(err.message);
+                process.exit(err.errorCode);
+            }
+            
             pokemon = await pokemon.json();
             pokemonCache[name] = pokemon
         }

@@ -51,13 +51,15 @@ function parseSearch(args){                                     //function for p
                         i++;                                                //skip and index (we already checked i + 1)
                     break;
                     default:                                                //error catchall
-                        console.error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     break;
                 }
             }else{
-                console.error('Trailing --. Exiting with code 1.');
-                process.exit(1);
+                const error = new Error('Trailing --. Exiting with code 1.');
+                error.errorCode = 1;
+                throw error;
             }                               
         }else{
             switch(flag){
@@ -66,26 +68,30 @@ function parseSearch(args){                                     //function for p
                 break;
                 case -1 :                                                   // JSON output selected
                     if(current_input){                                      // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 case -2 :                                                   // no-cache selected
                     if(current_input){                                      // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 default:                                                    //error catchall
-                    console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
-                    process.exit(1);
+                    const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                    error.errorCode = 1;
+                    throw error;
                 break;
             }
         }
     }
     if(parsed.arguments.pokemon_names.length === 0){                        //no input
-        console.error('No arguments provided. Exiting with code 1.');
-        process.exit(1);
+        const error = new Error('No arguments provided. Exiting with code 1.');
+        error.errorCode = 1;
+        throw error;
     }
 
 }
@@ -124,13 +130,15 @@ function parseList(args){                                       //function for p
                         i++;                                                //skip and index (we already checked i + 1)
                     break;
                     default:                                                //error catchall
-                        console.error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
+                        error.exitCode = 1;
+                        throw error;
                     break;
                 }
             } else {
-                console.error(`Trailing --. Exiting with code 1.`);
-                process.exit(1);
+                const error = new Error(`Trailing --. Exiting with code 1.`);
+                error.errorCode = 1;
+                throw error;
             }                               
         } else{
             switch(flag){
@@ -142,9 +150,14 @@ function parseList(args){                                       //function for p
                         if(!isNaN(current_input) && Number(current_input) > 0){     // makes sure the input is a number 1 or greater
                             parsed.arguments.page = Number(current_input) - 1;                       // assigns input & casts as number, -1 to adjust for index by 0
                         } else {
-                            console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
-                            process.exit(1);                                        // basic error handling
+                            const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                            error.errorCode = 1;
+                            throw error;                                            // basic error handling
                         }
+                    } else {
+                        const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error; 
                     }
                 break;
                 case 2 :                                                            // pageSize input
@@ -152,34 +165,43 @@ function parseList(args){                                       //function for p
                         if(!isNaN(current_input)&& Number(current_input) > 0){      // makes sure the input is a number
                             parsed.arguments.pageSize = Number(current_input);                       // assigns input & casts as number
                         } else {
-                            console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
-                            process.exit(1);                                        // basic error handling
+                            const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                            error.errorCode = 1;
+                            throw error;                                            // basic error handling
                         }
+                    }else {
+                        const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error; 
                     }
                 break;
                 case -1 :                                                           // JSON output selected
                     if(current_input){                                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 case -2 :                                                           // no-cache selected
                     if(current_input){                                              // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 default:
-                    console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);                    //error catchall
-                    process.exit(1);
+                    const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);                    //error catchall
+                    error.errorCode = 1;
+                    throw error;
                 break;
             }
         }   
     }
 
     if(parsed.arguments.types.length === 0){
-        console.error(`Invalid Number of Arguments. Exiting with code 1.`);                                //no arguments condition
-        process.exit(1);
+        const error = new Error(`Invalid Number of Arguments. Exiting with code 1.`);                                //no arguments condition
+        error.errorCode = 1;
+        throw error;
     }
 }
 
@@ -215,13 +237,15 @@ function parseCompare(args){                                    //function for p
                         i++;                                                //skip and index (we already checked i + 1)
                     break;
                     default:                                                //error catchall
-                        console.error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: -- ${args[i+1]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     break;
                 }                              
             }else{
-                    console.error(`Trailing --. Exiting with code 1.`);
-                    process.exit(1);
+                    const error = new Error(`Trailing --. Exiting with code 1.`);
+                    error.errorCode = 1;
+                    throw error;
             } 
         } else{
             switch(flag){                                           
@@ -232,36 +256,42 @@ function parseCompare(args){                                    //function for p
                         if(isStat(current_input)){                          // makes sure the input is a valid stat
                             parsed.arguments.stats.push(current_input);     // assigns input to stat. **does not check for duplicates**
                         } else {
-                            console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
-                            process.exit(1);                                // basic error handling
+                            const error = new Error(`Invalid stat: ${args[i]}. Exiting with code 1.`);
+                            error.errorCode = 1;
+                            throw error;                                // basic error handling
                         }
                 break;
                 case -1 :                                                    // JSON output selected
                     if(current_input){                                       // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --json ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 case -2 :                                                    // no-cache selected
                     if(current_input){                                       // should not be any arguments. just a flag. unnecessary case- indluded for completness
-                        console.error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
-                        process.exit(1);
+                        const error = new Error(`Unknown Command: --no-cache ${args[i]}. Exiting with code 1.`);
+                        error.errorCode = 1;
+                        throw error;
                     }
                 break;
                 default:                                                     //error catchall
-                    console.error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
-                    process.exit(1);
+                    const error = new Error(`Invalid Argument: ${args[i]}. Exiting with code 1.`);
+                    error.errorCode = 1;
+                    throw error;
                 break;
             }
         }   
     }
     if(parsed.arguments.pokemon_names.length <= 1){                         //no/too few arguments condition
-        console.error(`Too few pokemon. Exiting with code 1.`); 
-        process.exit(1);
+        const error = new Error(`Too few pokemon. Exiting with code 1.`); 
+        error.errorCode = 1;
+        throw error;
     }
     if(parsed.arguments.stats.length === 0){                                //no arguments condition
-        console.error(`No stats provided to compare. Exiting with code 1.`); 
-        process.exit(1);
+        const error = new Error(`No stats provided to compare. Exiting with code 1.`); 
+        error.errorCode = 1;
+        throw error;
     }
 }
 
@@ -312,11 +342,12 @@ function parseArguments(args){
     
     case 'HELP':                                                //simple help statement
         console.log("Valid commands:\n\nnpm run start -- search pikachu\nnpm run start -- list --type electric --page 1 --pageSize 10\nnpm run start -- compare pikachu charizard --stat speed\n\nfor more guidance, visit the README.");
-        process.exit(0);
+        process.exit(0);                                        //valid retrun
     break;
     default:
-        console.error(`Unknown Command: ${args[0]} If you need help, enter npm run start -- help. Exiting with code 1.`);
-        process.exit(1);
+        const error = new Error(`Unknown Command: ${args[0]}. If you need help, enter npm run start -- help. Exiting with code 1.`);
+        error.errorCode = 1;
+        throw error;
     break;
     }
 

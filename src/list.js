@@ -21,8 +21,14 @@ async function fetchList(types){
         const type = types[i];
         let list = {};
         if(!listCache[type]){                                                                           //checks local cache
-            list = await fetchWithDelay(`https://pokeapi.co/api/v2/type/${type}/`, 500 , 5);            //pagination doesnt seem to do anything here, I tried following the documentation but it returned the same size no matter what I did.
             
+            try{
+                list = await fetchWithDelay(`https://pokeapi.co/api/v2/type/${type}/`, 500 , 5);        //pagination doesnt seem to do anything here, I tried following the documentation but it returned the same size no matter what I did.
+            
+            }catch(err){
+                console.error(err.message);
+                process.exit(err.errorCode);
+            }
             list = await list.json();
             listCache[type] = list;                                                                     //cache the pulled list into global cache
         }

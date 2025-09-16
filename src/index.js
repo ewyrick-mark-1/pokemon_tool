@@ -6,11 +6,18 @@ const parseArguments = require('./parseArguments.js');
 
 const args = process.argv.slice(2);         //takes inputs from command line and removes non useful parts at the beggining
 console.log(args);                          //log for debugging
-
-
-const parsedArgs = parseArguments(args)     //parses arguments and formats them in an argument object
-console.log(parsedArgs);                    //log for debugging 
-
+let parsedArgs = {}
+if(args.length === 0){                      //no command error catch
+    console.error("no command entered. make sure npm run start -- command. exiting with code 1.")
+    process.exit(1);
+}
+try {
+  parsedArgs = parseArguments(args)         //parses arguments and formats them in an argument object
+}catch(err){
+    console.error(err.message);
+    process.exit(err.errorCode);
+}
+console.log(parsedArgs);
 let output = null;                          //init output
 switch( parsedArgs.function ){              //switch based on selected function
     case 'SEARCH':
