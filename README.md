@@ -1,15 +1,64 @@
 # What is this?
+[pokemon_tool] is a program designed to allow the user to search, list and compare pokemon using a variety of arguments and commands. To achieve this, it makes use of [pokeAPI](https://pokeapi.co/). Using this tool, you can:
+- search for multiple pokemon simultaneously- yielding get a table of important information and stats for each pokemon
+- list all pokemon of a given type (or types) with variable page sizes
+- compare however many stats you wish across as many pokemon as you would like
+- output all of the above in either a table or json 
 
 ##  How to install:
+**Prerequisites: [Node.js](https://nodejs.org/en)**
+
+To install, clone this repository to your machine and open it in the IDE of your choice- I used VScode. That's it!
+
+If you are interested in running testing on it, open terminal and run 'npm install'. This will install jest, the framework I chose for building test files.
 
 ## How to run:
 
+make sure you are in the termaial, specifically in the project directory. The three main commands to run are the following:
+- npm run start -- search
+- npm run start -- list
+- npm run start -- compare
+- npm run start -- help
+
+These commands respectively have the following arguments:
+- npm run start -- search pokemon1 pokemon2 ... pokemonN
+- npm run start -- list --type type1 type2 ... typeN --page pageNumber --pageSize pageLength
+- npm run start -- compare pokemon1 pokemon2 ... pokemonN --stat stat1 stat2 ... statN
+
+A few examples follow:
+- npm run start -- search pikachu skarmory
+- npm run start -- list --type electric --page 2 --pagesize 25
+- npm run start -- compare pikachu charizard skarmory --stat spd def hp
+
+More examples of commands can be found in the commands for testing section, under valid commands.
 ##  How to run tests:
+To run some of the pre built tests, or to run your own you will need to make sure that you have jest installed. If you don't, you can install it via the command 'npm install' - this download the developer dependencies. You can run the test files included under the tests folder with the command 'npm test'. This will test search.js, compare.js, list.js, as well as parseArguments.js.
 
 ##  How to add a new command:
+To add a new command there are a few things you will have to do. 
+1. update the switch statements in parseArguments to include your command(s), including separate functions for processing its arguments into the universal 'parsed' variable.
+2. update main switch statement in index.js to pass the parsed arguments to your new file
+3. create a new js file in src to implement your command.
 
+note: I may, later down the line adjust the object parsing works so it references an external json file. That would make it much faster and more convenient to add future commands. (the current method is rather unwieldy)
 ##  Project Structure:
+This project is structured to keep things simple and easy to read. using a general command and arguments, the general path follows:
 
+1. command and arguments are entered in the terminal
+2. these are received in index.js and sent to parseArguments.js for processing.
+3. parseArguments is designed to be robust, and allow for duplicate flags, spaces between -- and the flag, as well as multiple arguments. It takes these arguments and stores them in an object named 'parsed', which is structured/initialized as follows:
+{
+    function : null, 
+    arguments : {}, 
+    flags : {
+        json_flag : false, 
+        no_cache : false
+    }
+}
+4. parsed is designed to be universal across the different command files ( search.js, list.js, ect ). When index.js receives it, its function element is put through a switch statement to determine which command file should receive it.
+5. once a command file receives it, it unpacks the arguments and flags to store them locally, at which point their individual logic is carried out.
+6. every command file at some point calls the API, which is handled asynchronously by fetchWithDelay. This file implements fetching with bounded exponential backoff to improve consistency/reliability of API calls without overloading the server.
+7. the command files output is passed back to index, at which point it is output to the terminal.
 
 
 ##  AI usage:
@@ -18,15 +67,17 @@ The use of AI in this project was limited to the following:
 
 - Research on best practices for API setup
 - Research on JS specific syntax
-- developing invalid command cases for testing
+- Research on testing libraries
+- help developing invalid command cases for testing
 
-### commands for testing:
+### error codes:
+
 error codes:
 
 - 1 : bad arguments / syntax
 - 2 : API fetch error
 
-
+### commands for testing:
 
 search:
 
