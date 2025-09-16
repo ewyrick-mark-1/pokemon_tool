@@ -61,6 +61,13 @@ This project is structured to keep things simple and easy to read. using a gener
 6. every command file at some point calls the API, which is handled asynchronously by fetchWithDelay. This file implements fetching with bounded exponential backoff to improve consistency/reliability of API calls without overloading the server.
 7. the command files output is passed back to index, at which point it is output to the terminal.
 
+## Bugs/Things to be fixed
+There are a few things that are currently pretty unoptimal. I intend to go through and fix them at some point. These include:
+- non-useful in process caching in all command files. Due mostly to concurrency updates
+- Testing may return a false negative if the API returns out of order
+- more testing needed for API fetching. Currently have integration tests but no unit test.
+- Argument parsing is in need of a more readable and modular re struture
+- local JSON cache implementation is needed. flags have already been implemented.
 
 ##  AI usage:
 
