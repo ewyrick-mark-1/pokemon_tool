@@ -68,13 +68,13 @@ A good exapmle entry is list:
                     "PAGE" : "number",
                     "PAGESIZE" : "number"
                 },
-                "file" : "list.js"   
+                "function_name" : "list.js"   
     
             },
     ...
 }
 ```
-2. create a new js file (using the specified file name you put in inputConfiguration.json) in src to implement your command.
+2. create a new js file (using the specified function name in inputConfiguration.json) in src to implement your command.
 
 
 ##  Project Structure:
