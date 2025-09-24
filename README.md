@@ -14,7 +14,9 @@ If you are interested in running testing on it, open terminal and run 'npm insta
 
 ## How to run:
 
-make sure you are in the termaial, specifically in the project directory. The three main commands to run are the following:
+Make sure you are in the termaial, specifically in the project directory. I found that running the commands in comand promt was the most consitent on windows, due to some script limitations in powershell.
+
+The three main commands to run are the following:
 ```
 - npm run start -- search
 - npm run start -- list
