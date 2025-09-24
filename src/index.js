@@ -18,16 +18,20 @@ try {
     console.error(err.message);
     process.exit(err.errorCode);
 }
-const functionName = inputConfiguration.commands[parsedArgs.main_command].function_name;
-const commandFunction = require(`./${functionName}`);
 
-if(commandFunction){
-    commandFunction(parsedArgs)
-        .then(result => parsedArgs.global_flags["JSON"] ? console.log(result) : console.table(result))        //calls commandFunction & provides arguments. output format will be based on --json flag
-        .catch(err =>{
-            console.error(err.message);
-            process.exit(err.errorCode);
-        });
+if(!parseArguments.main_command === 'HELP'){    //prevents error from accessing function name for help.
+    const functionName = inputConfiguration.commands[parsedArgs.main_command].function_name;
+    const commandFunction = require(`./${functionName}`);
+
+    if(commandFunction){
+        commandFunction(parsedArgs)
+            .then(result => parsedArgs.global_flags["JSON"] ? console.log(result) : console.table(result))        //calls commandFunction & provides arguments. output format will be based on --json flag
+            .catch(err =>{
+                console.error(err.message);
+                process.exit(err.errorCode);
+            });
+    }
 }
+
 
 return 0;
