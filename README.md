@@ -15,48 +15,85 @@ If you are interested in running testing on it, open terminal and run 'npm insta
 ## How to run:
 
 make sure you are in the termaial, specifically in the project directory. The three main commands to run are the following:
+```
 - npm run start -- search
 - npm run start -- list
 - npm run start -- compare
 - npm run start -- help
+```
 
 These commands respectively have the following arguments:
+```
 - npm run start -- search pokemon1 pokemon2 ... pokemonN
 - npm run start -- list --type type1 type2 ... typeN --page pageNumber --pageSize pageLength
 - npm run start -- compare pokemon1 pokemon2 ... pokemonN --stat stat1 stat2 ... statN
+```
 
 A few examples follow:
+```
 - npm run start -- search pikachu skarmory
 - npm run start -- list --type electric --page 2 --pagesize 25
 - npm run start -- compare pikachu charizard skarmory --stat spd def hp
+```
 
 More examples of commands can be found in the commands for testing section, under valid commands.
 ##  How to run tests:
-To run some of the pre built tests, or to run your own you will need to make sure that you have jest installed. If you don't, you can install it via the command 'npm install' - this download the developer dependencies. You can run the test files included under the tests folder with the command 'npm test'. This will test search.js, compare.js, list.js, as well as parseArguments.js.
+To run some of the pre built tests, or to run your own, you will need to make sure that you have jest installed. If you don't, you can install it via the command 'npm install' - this will download the developer dependencies. You can run the test files included under the tests folder with the command 'npm test'. This will test search.js, compare.js, list.js, as well as parseArguments.js.
 
-There is one known bug with testing. Sometimes, concurrent API calls can cause an output to be out of the expected order. It seems to be pretty rare, but it is possible.
+There is one known bug with testing. Sometimes, concurrent API calls can cause an output to be out of the expected order. It seems to be pretty rare with small numbers of calls, but it is possible.
 ##  How to add a new command:
 To add a new command there are a few things you will have to do. 
-1. update the switch statements in parseArguments to include your command(s), including separate functions for processing its arguments into the universal 'parsed' variable.
-2. update main switch statement in index.js to pass the parsed arguments to your new file
-3. create a new js file in src to implement your command.
+1. Add your command and its arguments to inputConfiguration.json under commands.
+A good exapmle entry is list:
+```
+"commands" : {
+    ...
+    "LIST" : {
+                
+                "argument_list" : {
+                    "TYPE" : [], 
+                    "PAGE" : 1, 
+                    "PAGESIZE" : 10
+                },
+                "argument_min" : {
+                    "PAGE" : 1, 
+                    "PAGESIZE" : 1
+                },
+                "argument_max" : {
+                    "PAGE" : 999, 
+                    "PAGESIZE" : 999
+                },
+                "argument_types" : {
+                    "TYPE" : "string",
+                    "PAGE" : "number",
+                    "PAGESIZE" : "number"
+                },
+                "file" : "list.js"   
+    
+            },
+    ...
+}
+```
+2. create a new js file (using the specified file name you put in inputConfiguration.json) in src to implement your command.
 
-note: I may, later down the line adjust the object parsing works so it references an external json file. That would make it much faster and more convenient to add future commands. (the current method is rather unwieldy)
+
 ##  Project Structure:
 This project is structured to keep things simple and easy to read. using a general command and arguments, the general path follows:
 
 1. command and arguments are entered in the terminal
 2. these are received in index.js and sent to parseArguments.js for processing.
-3. parseArguments is designed to be robust, and allow for duplicate flags, spaces between -- and the flag, as well as multiple arguments. It takes these arguments and stores them in an object named 'parsed', which is structured/initialized as follows:
+3. parseArguments is designed to be dynamic, and adjust based on inputConfiguration.json. It takes command line arguments and stores them in an object named 'parsed', which is structured/initialized as follows:
+```
 {
-    function : null, 
+    main_command : null, 
     arguments : {}, 
-    flags : {
-        json_flag : false, 
-        no_cache : false
+    global_flags : {
+        "JSON" : false, 
+        "NO-CACHE" : false
     }
 }
-4. parsed is designed to be universal across the different command files ( search.js, list.js, ect ). When index.js receives it, its function element is put through a switch statement to determine which command file should receive it.
+```
+4. parsed is designed to be universal across the different command files ( search.js, list.js, ect ). When index.js receives it, it sends parsed to the specified command file.
 5. once a command file receives it, it unpacks the arguments and flags to store them locally, at which point their individual logic is carried out.
 6. every command file at some point calls the API, which is handled asynchronously by fetchWithDelay. This file implements fetching with bounded exponential backoff to improve consistency/reliability of API calls without overloading the server.
 7. the command files output is passed back to index, at which point it is output to the terminal.
@@ -66,7 +103,6 @@ There are a few things that are currently pretty unoptimal. I intend to go throu
 - non-useful in process caching in all command files. Due mostly to concurrency updates
 - Testing may return a false negative if the API returns out of order
 - more testing needed for API fetching. Currently have integration tests but no unit test.
-- Argument parsing is in need of a more readable and modular re struture
 - local JSON cache implementation is needed. flags have already been implemented.
 
 ##  AI usage:
@@ -141,4 +177,4 @@ compare:
         - npm run start -- compare pikachu charizard --foo bar                  //handled   - error code 1 - INVALID ARGS
         - npm run start -- compare --stat spd def hp                            //handled   - error code 1 = NO_NAMES
 
-- note: list can behave strangley with floating point arguments, but does not break due.
+- note: list can behave strangley with floating point arguments, but does not break due to integer multipliers.
