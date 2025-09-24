@@ -1,0 +1,68 @@
+{
+    "commands" : {
+        "SEARCH" : {
+            "argument_list" : {
+                "SEARCH" : []
+            },
+            "argument_min" : {
+                
+            },
+            "argument_max" : {
+                
+            },
+            "argument_types" : {
+                "SEARCH" : "string"
+            }  
+        },
+        "LIST" : {
+            
+            "argument_list" : {
+                "TYPE" : [], 
+                "PAGE" : 1, 
+                "PAGESIZE" : 10
+            },
+            "argument_min" : {
+                "PAGE" : 1, 
+                "PAGESIZE" : 1
+            },
+            "argument_max" : {
+                "PAGE" : 999, 
+                "PAGESIZE" : 999
+            },
+            "argument_types" : {
+                "TYPE" : "string",
+                "PAGE" : "number",
+                "PAGESIZE" : "number"
+            }   
+
+        },
+        "COMPARE" : {
+            
+            "argument_list" : {
+                "COMPARE" : [], 
+                "STAT" : []
+            },
+            "argument_min" : {
+                
+            },
+            "argument_max" : {
+                
+            },
+            "argument_types" : {
+                "COMPARE" : "string",
+                "STAT" : "string"
+            }  
+
+
+        },
+        "HELP" : {
+            "help_text" : "Valid commands:\n\nnpm run start -- search pikachu\nnpm run start -- list --type electric --page 1 --pageSize 10\nnpm run start -- compare pikachu charizard --stat speed\n\nfor more guidance, visit the README."
+        }
+    },
+
+    
+    "global_flags" : {
+        "JSON" : false,
+        "NO-CACHE" : false
+    }
+}

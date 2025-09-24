@@ -5,9 +5,9 @@ describe('list', function(){
     //valid tests
     test('single argument', async function(){
         let input = {
-            function: 'LIST',
-            arguments: { types: [ 'electric' ], page: 0, pageSize: 10 },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'LIST',
+            arguments: { TYPE: [ 'electric' ], PAGE: 0, PAGESIZE: 10 },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = [
@@ -31,9 +31,9 @@ describe('list', function(){
     });
     test('multiple arguments', async function(){
         let input = {
-            function: 'LIST',
-            arguments: { types: [ 'electric', 'steel' ], page: 0, pageSize: 10 },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'LIST',
+            arguments: { TYPE: [ 'electric', 'steel' ], PAGE: 0, PAGESIZE: 10 },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = [
@@ -67,9 +67,9 @@ describe('list', function(){
     });
     test('single argument with page ', async function(){
         let input = {
-            function: 'LIST',
-            arguments: { types: [ 'electric' ], page: 3, pageSize: 10 },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'LIST',
+            arguments: { TYPE: [ 'electric' ], PAGE: 3, PAGESIZE: 10 },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = [
@@ -93,9 +93,9 @@ describe('list', function(){
     });
     test('single argument with page and pageSize', async function(){
         let input = {
-            function: 'LIST',
-            arguments: { types: [ 'electric' ], page: 3, pageSize: 20 },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'LIST',
+            arguments: { TYPE: [ 'electric' ], PAGE: 3, PAGESIZE: 20 },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = [
@@ -129,9 +129,9 @@ describe('list', function(){
     });
     test('single argument with --json', async function(){
         let input = {
-            function: 'LIST',
-            arguments: { types: [ 'electric' ], page: 0, pageSize: 10 },
-            flags: { json_flag: true, no_cache: false }
+            main_command: 'LIST',
+            arguments: { TYPE: [ 'electric' ], PAGE: 0, PAGESIZE: 10 },
+            global_flags: { "JSON": true, "NO-CACHE": false }
         };
         //JSON string output (I think)
         let expected_output = "{\"electric\":{\"25\":\"pikachu\",\"26\":\"raichu\",\"81\":\"magnemite\",\"82\":\"magneton\",\"100\":\"voltorb\",\"101\":\"electrode\",\"125\":\"electabuzz\",\"135\":\"jolteon\",\"145\":\"zapdos\",\"170\":\"chinchou\"}}"
@@ -144,6 +144,14 @@ describe('list', function(){
     });
     //invalid tests
 
-    //need to refactor code to throw errors & implement try / catch to make these tests
+    test('no pokemon provided', async function(){
+      let input = {
+          main_command: 'LIST',
+          arguments: { TYPE: [], PAGE: 0, PAGESIZE: 10}, 
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
+
+      await expect(list(input)).rejects.toThrow('Too few types provided. You must specify at least 1. Exiting with code 1.');
+    });
     
 });

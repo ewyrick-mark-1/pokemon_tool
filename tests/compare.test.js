@@ -5,9 +5,9 @@ describe('compare', function(){
     //valid tests
     test('two pokemon, one stat', async function(){
         let input = {
-            function: 'COMPARE',
-            arguments: { pokemon_names: [ 'pikachu', 'charizard' ], stats: [ 'atk' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'COMPARE',
+            arguments: { COMPARE: [ 'pikachu', 'charizard' ], STAT: [ 'atk' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -25,9 +25,9 @@ describe('compare', function(){
     });
     test('two pokemon, multiple stats', async function(){
         let input = {
-            function: 'COMPARE',
-            arguments: { pokemon_names: [ 'skarmory', 'charizard' ], stats: [ 'atk', 'def', 'spd' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'COMPARE',
+            arguments: { COMPARE: [ 'skarmory', 'charizard' ], STAT: [ 'atk', 'def', 'spd' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -53,7 +53,41 @@ describe('compare', function(){
     });
     
     //invalid tests
+    test('no pokemon provided', async function(){
+      let input = {
+          main_command: 'COMPARE',
+          arguments: { COMPARE: [], STAT: ['atk'] }, 
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
 
-    //need to refactor code to throw errors & implement try / catch to make these tests
+      await expect(compare(input)).rejects.toThrow('Too few pokemon provided. You must specify at least 2. Exiting with code 1.');
+    });
+    test('no stats provided', async function(){
+      let input = {
+          main_command: 'COMPARE',
+          arguments: { COMPARE: ['pikachu', 'charizard'], STAT: [] }, 
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
+
+      await expect(compare(input)).rejects.toThrow('Too few stats provided. You must specify at least 1. Exiting with code 1.');
+    });
+    test('only one pokemon provided', async function(){
+      let input = {
+          main_command: 'COMPARE',
+          arguments: { COMPARE: ['pikachu'], STAT: ['atk'] },  // Only 1 pokemon
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
+
+      await expect(compare(input)).rejects.toThrow('Too few pokemon provided. You must specify at least 2. Exiting with code 1.');
+    });
+    test('invalid stat provided', async function(){
+      let input = {
+          main_command: 'COMPARE',
+          arguments: { COMPARE: ['pikachu', 'charizard'], STAT: ['invalid'] },
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
+
+      await expect(compare(input)).rejects.toThrow('Invalid stat: invalid. Exiting with code 1.');
+     });
     
 });

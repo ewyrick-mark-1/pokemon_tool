@@ -4,7 +4,12 @@ const list = require('./list.js');
 const compare = require('./compare.js');
 const parseArguments = require('./parseArguments.js');
 
-const args = process.argv.slice(2);         //takes inputs from command line and removes non useful parts at the beggining
+const commands = {                          //map command name in json file to actual js file
+    'SEARCH': search,
+    'LIST': list,
+    'COMPARE': compare
+}
+const args = process.argv.slice(2);         //takes inputs from command line and removes non useful parts at the beginning
 //console.log(args);                        //log for debugging
 let parsedArgs = {}
 if(args.length === 0){                      //no command error catch
@@ -17,17 +22,15 @@ try {
     console.error(err.message);
     process.exit(err.errorCode);
 }
+const commandFunction = commands[parsedArgs.main_command];
 
-switch( parsedArgs.function ){              //switch based on selected function
-    case 'SEARCH':
-        search(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));        //calls search function & provides arguments. output format will be based on --json flag
-    break;
-    case 'LIST':
-        list(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));          //calls list function & provides arguments. output format will be based on --json flag
-    break;
-    case 'COMPARE':
-        compare(parsedArgs).then(result => parsedArgs.flags.json_flag ? console.log(result) : console.table(result));       //calls compare function & provides arguments. output format will be based on --json flag
-    break;                                  //no default. covered in parseArguments.
+if(commandFunction){
+    commandFunction(parsedArgs)
+        .then(result => parsedArgs.global_flags["JSON"] ? console.log(result) : console.table(result))        //calls commandFunction & provides arguments. output format will be based on --json flag
+        .catch(err =>{
+            console.error(err.message);
+            process.exit(err.errorCode);
+        });
 }
 
 return 0;

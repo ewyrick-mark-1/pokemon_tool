@@ -5,9 +5,9 @@ describe('search', function(){
     //valid tests
     test('single argument', async function(){
         let input = {
-            function: 'SEARCH',
-            arguments: { pokemon_names: [ 'pikachu' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'SEARCH',
+            arguments: { SEARCH: [ 'pikachu' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -33,9 +33,9 @@ describe('search', function(){
     });
     test('multiple arguments', async function(){
         let input = {
-            function: 'SEARCH',
-            arguments: { pokemon_names: [ 'pikachu', 'charizard' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'SEARCH',
+            arguments: { SEARCH: [ 'pikachu', 'charizard' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -74,9 +74,9 @@ describe('search', function(){
     });
     test('poke_id argument', async function(){
         let input = {
-            function: 'SEARCH',
-            arguments: { pokemon_names: [ '123' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'SEARCH',
+            arguments: { SEARCH: [ '123' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -102,9 +102,9 @@ describe('search', function(){
     });
     test('multiple mixed arguments', async function(){
         let input = {
-            function: 'SEARCH',
-            arguments: { pokemon_names: [ 'pikachu', '123' ] },
-            flags: { json_flag: false, no_cache: false }
+            main_command: 'SEARCH',
+            arguments: { SEARCH: [ 'pikachu', '123' ] },
+            global_flags: { "JSON": false, "NO-CACHE": false }
         };
 
         let expected_output = {
@@ -143,5 +143,13 @@ describe('search', function(){
     });
     //invalid tests
 
-    //need to refactor code to throw errors & implement try / catch to make these tests
+    test('no pokemon provided', async function(){
+      let input = {
+          main_command: 'SEARCH',
+          arguments: { SEARCH: []}, 
+          global_flags: { "JSON": false, "NO-CACHE": false }
+      };
+
+      await expect(search(input)).rejects.toThrow('Too few pokemon provided. You must specify at least 1. Exiting with code 1.');
+    });
 });

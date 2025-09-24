@@ -18,7 +18,7 @@ async function fetchWithDelay(url, delay, attempts){                        //im
             error.errorCode = 2;                                            //code 2 for bad API
             throw error;
         }
-        sleep(delay * (attempt ** 2));                                      //if error is 429/5xx, retry with exponientally increasing wait times. No jitter for sake of brevity
+        sleep(delay * (attempt ** 2));                                      //if error is 429/5xx, retry with exponentially increasing wait times. No jitter for sake of brevity
     }
     const error = new Error(`something went wrong with API call in compare.js- \n\nexiting with code 2.\n`);
     error.errorCode = 2;                                                    //code 2 for bad API

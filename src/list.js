@@ -1,7 +1,17 @@
-//imported fucntions
+//imported functions
 const fetchWithDelay = require('./fetchWithDelay.js');  //fetchWithDelay(url, wait, attempts)
 //globals
 const concurrent_limit = 5;
+
+function checkInputs(inputs){                   //basic logic to check if inputs are valid
+    if(inputs.arguments.TYPE.length === 0){      //no inputs
+        const error = new Error(`Too few types provided. You must specify at least 1. Exiting with code 1.`);
+        error.errorCode = 1;
+        throw error;
+    } 
+    
+    return true;
+}
 
 function tableFormat(output){                                                                           //function to better format output for tables. page would run long otherwise.
     let formattedOutput = [];
@@ -76,12 +86,13 @@ function formatList(listCache, page, pageSize,json_flag, no_cache){
 
 
 async function list(args){
-    const types = args.arguments.types;                                 //assign inputs to more readable variables
-    const page = args.arguments.page;
-    const pageSize = args.arguments.pageSize; 
+    checkInputs(args);
+    const types = args.arguments.TYPE;                                 //assign inputs to more readable variables
+    const page = args.arguments.PAGE;
+    const pageSize = args.arguments.PAGESIZE; 
     
-    const json_flag  = args.flags.json_flag;                            //assign flags
-    const no_cache = args.flags.no_cache;
+    const json_flag = args.global_flags["JSON"];
+    const no_cache = args.global_flags["NO-CACHE"];
 
     let listCache = {};
         
@@ -94,4 +105,4 @@ async function list(args){
 }
 
 
-module.exports = list;                              //exports it so the module may be recieved by main
+module.exports = list;                              //exports it so the module may be received by main

@@ -11,6 +11,14 @@ function processTypes(types){                   //function to loop through types
     return typelist;
 }
 
+function checkInputs(inputs){                   //basic logic to check if inputs are valid
+    if(inputs.arguments.SEARCH.length === 0){      //no inputs
+        const error = new Error(`Too few pokemon provided. You must specify at least 1. Exiting with code 1.`);
+        error.errorCode = 1;
+        throw error;
+    } 
+    return true;
+}
 
 async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearlly (bad). if time, update & add concurrency limit
     let pokemonCache = {};
@@ -77,9 +85,10 @@ async function pokemonStats(pokemonCache,  json_flag, no_cache){
 }
 
 async function search(args){
-    const pokemon_names = args.arguments.pokemon_names;                 //assign inputs to more readable variables
-    const json_flag = args.flags.json_flag;
-    const no_cache = args.flags.no_cache;
+    checkInputs(args);
+    const pokemon_names = args.arguments.SEARCH;                 //assign inputs to more readable variables
+    const json_flag = args.global_flags["JSON"];
+    const no_cache = args.global_flags["NO-CACHE"];
     let pokemonCache = {};
 
     pokemonCache = await fetchPokemon(pokemon_names);                                   //fetch all pokemon (one at a time)
@@ -89,5 +98,5 @@ async function search(args){
     
 }
 
-//exports it so the module may be recieved by main
+//exports it so the module may be received by main
 module.exports = search;

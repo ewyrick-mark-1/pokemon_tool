@@ -1,4 +1,4 @@
-//imported fucntions
+//imported functions
 const fetchWithDelay = require('./fetchWithDelay.js');
 //globals
 const concurrent_limit = 5;
@@ -20,7 +20,33 @@ const allowed_stats = {                                                     //li
 };
 
 
+function checkStats(stats){
+    for(let i = 0; i < stats.length; i++){
+        if(!(stats[i].toUpperCase() in allowed_stats)){
+            const error = new Error(`Invalid stat: ${stats[i]}. Exiting with code 1.`);
+            error.errorCode = 1;
+            throw error;
+        }
+    }
+}
 
+function checkInputs(inputs){
+    if(inputs.arguments.STAT.length === 0){      //no inputs
+        const error = new Error(`Too few stats provided. You must specify at least 1. Exiting with code 1.`);
+        error.errorCode = 1;
+        throw error;
+    } 
+    
+    if(inputs.arguments.COMPARE.length < 2){
+        const error = new Error(`Too few pokemon provided. You must specify at least 2. Exiting with code 1.`);
+        error.errorCode = 1;
+        throw error;
+    } 
+
+    checkStats(inputs.arguments.STAT);//check stats
+
+    return true;
+}
 
 
 async function fetch_pokemon(pokemon_names){                                // gotta cache them all
@@ -57,9 +83,9 @@ async function fetch_pokemon(pokemon_names){                                // g
 
 function compare_stats(pokemonCache, stats, json_flag, no_cache){                                                   // compares stats (stats) of pokemon (pokemonCache)
     let output = {};
-    for(let i = 0; i < stats.length; i++){                                  // main loop. loops over all entered stats to be comapred.
+    for(let i = 0; i < stats.length; i++){                                  // main loop. loops over all entered stats to be compared.
 
-        let names_and_values = {};                                          // aray with important information of the form : [name, stat_value]. might be worth changing this to obj
+        let names_and_values = {};                                          // array with important information of the form : [name, stat_value]. might be worth changing this to obj
         let current_stat_name = stats[i].toUpperCase();
         let current_stat_num = allowed_stats[current_stat_name];            // saves current stat of interest in a local variable
         
@@ -72,7 +98,7 @@ function compare_stats(pokemonCache, stats, json_flag, no_cache){               
 
         let top = {name: null, stat: -1}                                    // define structure. I am pretty sure -1 will not cause any errors
         for(const name in names_and_values){                                // iterates through names_and_values by key (name)
-            if(names_and_values[name] > top.stat){                          // determintes winner based on stat - no support for multiple winners atm
+            if(names_and_values[name] > top.stat){                          // determines winner based on stat - no support for multiple winners atm
                 top = { name: name, stat: names_and_values[name] };         // saves winner in top
             }
         }
@@ -90,20 +116,25 @@ function compare_stats(pokemonCache, stats, json_flag, no_cache){               
     }
     return output;
 }
-async function compare(args){
-    const pokemon_names = args.arguments.pokemon_names;                     //assign inputs for better readability
-    const stats = args.arguments.stats;
-    const json_flag = args.flags.json_flag;
-    const no_cache = args.flags.no_cache;
+async function compare(args){   
+    checkInputs(args)                                                               //check that the args are valid
 
-    let pokemonCache = {};                                                  //cache, of the form: {name: pokemon(json)}
+    const pokemon_names = args.arguments.COMPARE;                                   //assign inputs for better readability
+    const stats = args.arguments.STAT;
 
-    
-    pokemonCache = await fetch_pokemon(pokemon_names);                      //fetches pokemon and stores them in pokemonCache.
-    const output = compare_stats(pokemonCache, stats, json_flag, no_cache); //pokemon are stored in pokemonCache, so only pass the stats and flags
+    const json_flag = args.global_flags["JSON"];
+    const no_cache = args.global_flags["NO-CACHE"];
+
+    let pokemonCache = {};                                                          //cache, of the form: {name: pokemon(json)}
+
+
+    pokemonCache = await fetch_pokemon(pokemon_names);                              //fetches pokemon and stores them in pokemonCache.
+    const output = compare_stats(pokemonCache, stats, json_flag, no_cache);         //pokemon are stored in pokemonCache, so only pass the stats and flags
 
     return output;
+    
+    
 }
 
-//exports it so the module may be recieved by main
+//exports it so the module may be received by main
 module.exports = compare;
