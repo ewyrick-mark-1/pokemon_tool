@@ -20,7 +20,7 @@ function checkInputs(inputs){                   //basic logic to check if inputs
     return true;
 }
 
-async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearlly (bad). if time, update & add concurrency limit
+async function fetchPokemon(pokemon_names){     //performs API call for all pokemon that were input. does not batch, and moves linearly (bad). if time, update & add concurrency limit
     let pokemonCache = {};
     
         const promises = pokemon_names.map( async (name) => {
@@ -58,13 +58,13 @@ async function pokemonStats(pokemonCache,  json_flag, no_cache){
 
     let output = {}                                                     //define output
 
-    for(pokemon_name in pokemonCache){                                  //itterates through cache
+    for(pokemon_name in pokemonCache){                                  //iterates through cache
         pokemon = pokemonCache[pokemon_name];                           //assign current pokemon
         let stats = {                                                   //assign all stats to defined output elements structure
             "id"            : pokemon.id,
             "name"          : pokemon.name,
             "type(s)"       : processTypes(pokemon.types).join(", "),
-            "height (m)"    : (pokemon.height * 0.1).toFixed(3),        //adjusts to standard measurments & limits precision
+            "height (m)"    : (pokemon.height * 0.1).toFixed(3),        //adjusts to standard measurements & limits precision
             "weight (kg)"   : (pokemon.weight * 0.1).toFixed(3),
             "base hp"       : pokemon.stats[0].base_stat,               // 0 is base hp
             "base atk"      : pokemon.stats[1].base_stat,

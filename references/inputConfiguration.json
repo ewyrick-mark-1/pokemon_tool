@@ -12,7 +12,8 @@
             },
             "argument_types" : {
                 "SEARCH" : "string"
-            }  
+            },
+            "function_name" : "search"  
         },
         "LIST" : {
             
@@ -33,7 +34,8 @@
                 "TYPE" : "string",
                 "PAGE" : "number",
                 "PAGESIZE" : "number"
-            }   
+            },
+            "function_name" : "list"  
 
         },
         "COMPARE" : {
@@ -51,7 +53,8 @@
             "argument_types" : {
                 "COMPARE" : "string",
                 "STAT" : "string"
-            }  
+            },
+            "function_name" : "compare"  
 
 
         },

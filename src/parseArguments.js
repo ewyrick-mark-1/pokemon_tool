@@ -5,7 +5,7 @@ const inputConfiguration = Object.freeze(require('../references/inputConfigurati
 
 function parseArguments(args){
 
-    let parsed = {                                                              //make sure reset in case called multiple times.
+    let parsed = {                                                              //init parsed/most general form
         main_command : null, 
         arguments : {}, 
         global_flags : {
@@ -101,8 +101,7 @@ function parseArguments(args){
 
             //console.log(parsed);//for debugging
             return parsed;
-    }else{
-                                                                                                                            //invalid command
+    }else{                                                                                                                  //invalid command
         const error = new Error(`Unknown Command: ${args[0]}. If you need help, enter npm run start -- help. Exiting with code 1.`);
         error.errorCode = 1;
         throw error;
@@ -110,5 +109,6 @@ function parseArguments(args){
 
 
 }
-//exports it so the module may be recieved by main
+//exports it so the module may be received by main
 module.exports = parseArguments;
+
