@@ -19,7 +19,7 @@ try {
     process.exit(err.errorCode);
 }
 
-if(!parseArguments.main_command === 'HELP'){    //prevents error from accessing function name for help.
+if(!(parsedArgs.main_command === 'HELP')){    //prevents error from accessing function name for help.
     const functionName = inputConfiguration.commands[parsedArgs.main_command].function_name;
     const commandFunction = require(`./${functionName}`);
 
